@@ -17,6 +17,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strings"
 )
 
 const Version = "0.0.1"
@@ -26,13 +27,52 @@ func ParseArguments() {
 		HelpCmd()
 		return
 	}
-	switch os.Args[1]{
+	switch os.Args[1] {
 	case "help":
 		HelpCmd()
 	case "-v", "--version":
 		PrintVersion(Version)
+	case "search":
+		PrintSearchResults()
 	}
-	
+
+}
+
+func GetFlags(arguments []string) ([][2]string, string) {
+	var flags [][2]string
+	var keyword string
+	skipFlagValue := false
+
+	args := arguments[2:]
+	for i := range args {
+		if skipFlagValue {
+			skipFlagValue = false
+			continue
+		}
+		if !strings.HasPrefix(args[i], "-") && keyword == "" {
+			keyword = args[i]
+			continue
+			// flags = append(flags, {args[i], })
+		}
+		if strings.HasPrefix(args[i], "-") && strings.HasPrefix(args[i+1], "-") {
+			flags = append(flags, [2]string{args[i], ""})
+			continue
+		}
+		if !strings.HasPrefix(args[i], "-") {
+			log.Fatalf("Unknown flag %q", args[i])
+		}
+		flags = append(flags, [2]string{args[i], args[i + 1]})
+		skipFlagValue = true
+	}
+	return flags, keyword
+}
+
+func PrintSearchResults() {
+	if len(os.Args) < 3 {
+		SearchHelp()
+		return
+	}
+
 }
 
 func GetApiData(url string) ([]byte, error) {

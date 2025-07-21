@@ -7,7 +7,7 @@ import (
 )
 
 // Prints options/subcommands as well as a description. optionLenght is the total lenght of the option name
-func PrintOptions(options [][2]string, optionLenght int) {
+func AssembleOptions(options [][2]string, optionLenght int) string {
 	stringedSubcommands := ""
 
 	for _,subcommand := range options{
@@ -17,7 +17,7 @@ func PrintOptions(options [][2]string, optionLenght int) {
 		stringedSubcommands += strings.Repeat(" ", spaces)
 		stringedSubcommands += subcommand[1] + "\n"
 	}
-	fmt.Println(stringedSubcommands)
+	return stringedSubcommands
 }
 
 // Prints the help for the CLI, including subcommands
@@ -42,12 +42,30 @@ func HelpCmd() {
 
 	
 	fmt.Println(helpText)
-	PrintOptions(subcommands, 20)
-	fmt.Println("FLAGS")
-	PrintOptions(flags, 20)
+	fmt.Print(AssembleOptions(subcommands, 20))
+	fmt.Println("\nFLAGS")
+	fmt.Print(AssembleOptions(flags, 20))
 }
 
 func PrintVersion(version string) {
 	goVersion := runtime.Version()
 	fmt.Println(version + " " + goVersion)
+}
+
+func SearchHelp() {
+	flags := [][2]string{
+		{"-c, --category", "Search for mods with a specific category"},
+		{"--match-any", "Searches for mods matching one of the categories, instead of all of them"},
+		{"-v, --mod-version", "Searches for a specific version. By default the version set for the instance"},
+		{"-l, --loader", "Searches for a specific loader. By default the instance's loader"},
+		{"-s, --server-side", "Searches for mods that have to work on servers"},
+		{"-C, --client-side", "Searches for mods that have to work on clients"},
+		{"-t, --project-type", "Searches for a project type, Default: mod"},
+	}
+	fmt.Print(
+	"Searches for a project on Modrinth\n\n" +
+	"USAGE\n"+ 
+	"  modrinth-cli search <keywords> [flags]\n\n" +
+	"FLAGS\n")
+	fmt.Print(AssembleOptions(flags, 30))
 }
