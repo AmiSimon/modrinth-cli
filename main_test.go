@@ -8,7 +8,7 @@ import (
 func TestGetFlags(t *testing.T) {
 	args := []string{"exec", "search", "phosphor", "-c", "cursed", "--category", "adventure", "--match-any", "-v", "1.21.8"}
 	parsedArgs, keyword := GetFlags(args)
-	wantsParsedArgs := [][2]string{
+	wantsParsedArgs := []Flag{
 		{"-c", "cursed"},
 		{"--category", "adventure"},
 		{"--match-any", ""},
